@@ -1,16 +1,63 @@
 
 import io.restassured.http.Headers;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import io.restassured.RestAssured;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class HelloWorldTest {
+
+public class RestAssuredTests {
 
     @Test
-    public void testRestAssured(){
+    public void testRestAssured() throws InterruptedException {
+
+// Ex8: Токены ===========================================
+        Map<String, String> data = new HashMap<>();
+
+        Response  startWork = RestAssured
+                .get("https://playground.learnqa.ru/ajax/api/longtime_job")
+                .andReturn();
+
+        startWork.prettyPrint();
+
+        String accessToken = startWork.path("token");
+        int secondsResponse = startWork.path("seconds");
+
+        data.put("token", accessToken);
+
+        Response getResults = RestAssured
+                .given()
+                .queryParam("token", accessToken)
+                .when()
+                .get("https://playground.learnqa.ru/ajax/api/longtime_job")
+                .andReturn();
+
+        getResults.prettyPrint();
+
+        String status = getResults.path("status");
+        Assertions.assertEquals( "Job is NOT ready" , status);
+
+        Thread.sleep(secondsResponse * 1000);
+
+         getResults = RestAssured
+                .given()
+                .queryParam("token", accessToken)
+                .when()
+                .get("https://playground.learnqa.ru/ajax/api/longtime_job")
+                .andReturn();
+        getResults.prettyPrint();
+
+        status = getResults.path("status");
+        String result = getResults.path("result");
+
+        Assertions.assertEquals( "Job is ready" , status);
+        Assertions.assertNotEquals(null, result);
+
+
+/* Ex7: Долгий редирект ======================================
 
         String url = "https://playground.learnqa.ru/api/long_redirect";
         int codeResponse = 0;
@@ -30,7 +77,7 @@ public class HelloWorldTest {
             System.out.println("\n" + codeResponse);
             System.out.println(url);
         }
-
+*/
 
 /*
 
