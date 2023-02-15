@@ -1,8 +1,11 @@
 
 
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import io.restassured.RestAssured;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,8 +13,31 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class RestAssuredTests {
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "John" , "Pete"})
+    public void testHelloMethodWithoutName(String name){
+        Map<String, String> paramName = new HashMap<>();
+
+        if(name.length() > 0){
+            paramName.put("name", name);
+        }
+
+        JsonPath response = RestAssured
+                .given()
+                .queryParams(paramName)
+                .get("https://playground.learnqa.ru/api/hello")
+                .jsonPath();
+
+        String answer = response.getString("answer");
+        String expectedName = (name.length() > 0) ? name : "someone";
+        assertEquals("Hello, " + expectedName, answer, "The answer not existed");
+    }
+
 
     @Test
     public void testRestAssured() throws InterruptedException {
