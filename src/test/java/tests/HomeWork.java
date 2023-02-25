@@ -23,11 +23,9 @@ public class HomeWork extends BaseTestCase {
     @ParameterizedTest
     @CsvFileSource(resources = "/UserAgentData.csv", delimiter = '!')
     public void userAgentTest(String number, String userAgentData){
-        Map<String, String> userAgent = new HashMap<>();
-        userAgent.put("user-agent", userAgentData);
 
         RequestSpecification specUserAgent = RestAssured.given();
-        Response resp = specUserAgent.header("user-agent",userAgent)
+        Response resp = specUserAgent.header("user-agent",userAgentData)
                 .get("https://playground.learnqa.ru/ajax/api/user_agent_check")
                 .andReturn();
 
