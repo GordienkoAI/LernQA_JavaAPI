@@ -11,18 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BaseTestCase {
 
-    protected  String getHeader(Response Response, String name){
-        Headers headers = Response.getHeaders();
-
-        assertTrue(headers.hasHeaderWithName(name), "Response doesn't have have header with name " +  name);
-        return headers.getValue(name);
+    protected  String getHeader(Response response, String name){
+        Headers header = response.getHeaders();
+        assertTrue(header.hasHeaderWithName(name), "Response doesn't have header with name " +  name);
+        return header.getValue(name);
     }
 
-    protected String getCookie(Response Response, String name){
-        Map<String, String> cookies = Response.getCookies();
-
-        assertTrue(cookies.containsKey(name), "Response doesn't have cookie with name " + name);
-        return cookies.get(name);
+    protected String getCookie(Response response, String name){
+        assertTrue(response.cookies().containsKey(name), "Response doesn't have cookie with name " + name);
+        return response.getCookie(name);
     }
 
     protected int getIntFromJson(Response Response, String name){

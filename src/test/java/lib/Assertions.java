@@ -11,6 +11,4 @@ public class Assertions {
         assertEquals(expectedValue, value, "Json value is not equal to expected value");
     }
 
-
-
 }
