@@ -72,6 +72,7 @@ public class ApiCoreRequests {
     public Response makePutRequest(String url, String token, String cookie, Map<String, String> data)
     {
         return given()
+                .filter(new AllureRestAssured())
                 .header(new Header("x-csrf-token", token))
                 .cookie("auth_sid", cookie)
                 .body(data)
@@ -83,6 +84,7 @@ public class ApiCoreRequests {
     public Response makePutRequestNotAuthorize(String url, Map<String, String> data)
     {
         return given()
+                .filter(new AllureRestAssured())
                 .body(data)
                 .put(url)
                 .andReturn();

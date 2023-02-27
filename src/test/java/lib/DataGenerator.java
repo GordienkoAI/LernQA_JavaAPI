@@ -7,7 +7,7 @@ import java.util.Map;
 public class DataGenerator {
     public static String getRandomEmail(){
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
-        return "lernqa" + timestamp + "@example.com";
+        return "ler" + timestamp + "@example.com";
     }
 
     public static Map<String, String> getRegistrationData(){

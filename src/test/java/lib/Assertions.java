@@ -40,6 +40,15 @@ public class Assertions {
         );
     }
 
+    @Step("Проверяем отображение ошибки")
+    public static void assertResponseErrorText(Response Response, String expectedAnswer){
+        assertEquals(
+                expectedAnswer,
+                Response.jsonPath().getString("error"),
+                "Response text is not as expected"
+        );
+    }
+
     @Step("Проверяем код ответ от сервера с ожидаемым {expectedStatusCode}")
     public static void assertResponseCodeEquals(Response Response, int expectedStatusCode){
         assertEquals(

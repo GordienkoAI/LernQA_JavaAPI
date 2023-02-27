@@ -10,6 +10,7 @@ import lib.BaseTestCase;
 import lib.DataGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,11 +96,12 @@ public class UserEditTest extends BaseTestCase {
         String header = this.getHeader(responseGetAuth,"x-csrf-token");
 
         //3 update person date authorize another person
-        userData.put("lastName", "Barabulka");
+        Map<String, String> newData = new HashMap<>();
+        newData.put("lastName", "Barabulka");
         Response responseUpdateData = apiCoreRequests.makePutRequest("https://playground.learnqa.ru/api/user/" + userId,
                 header,
                 cookie,
-                userData);
+                newData);
 
         Assertions.assertResponseTextEquals(responseUpdateData, "Please, do not edit test users with ID 1, 2, 3, 4 or 5.");
     }
@@ -120,14 +122,52 @@ public class UserEditTest extends BaseTestCase {
         String cookie = this.getCookie(responseGetAuth,"auth_sid");
         String header = this.getHeader(responseGetAuth,"x-csrf-token");
 
-        //3 update person date authorize another person
-        userData.put("email", "Barabulkamail.com");
+        //3 update person date authorize some person
+        Map<String, String> newData = new HashMap<>();
+        newData.put("email", "Barabulkamail.com");
         Response responseUpdateData = apiCoreRequests.makePutRequest("https://playground.learnqa.ru/api/user/" + userId,
                 header,
                 cookie,
-                userData);
+                newData);
 
         responseUpdateData.print();
         Assertions.assertResponseTextEquals(responseUpdateData, "Invalid email format");
+    }
+
+
+    @Test
+    @Description("Update user firstname authorize some user")
+    public void testUpdateUserFirstNameAuthorizeSomeUser(){
+        //1 create user
+        Map<String, String>  userData = DataGenerator.getRegistrationData();
+
+        JsonPath responseCreateAuth = apiCoreRequests
+                .makePostRequestReturnJson("https://playground.learnqa.ru/api/user/", userData);
+        String userId = responseCreateAuth.getString("id");
+
+        //2 authorize user
+        Map<String, String> authData = new HashMap<>();
+        authData.put("email", userData.get("email"));
+        authData.put("password", userData.get("password"));
+
+        Response responseGetAuth = apiCoreRequests
+                .makePostRequest("https://playground.learnqa.ru/api/user/login", authData);
+
+        responseGetAuth.print();
+
+        String cookie = this.getCookie(responseGetAuth,"auth_sid");
+        String header = this.getHeader(responseGetAuth,"x-csrf-token");
+
+        //3 update person date authorize some person
+        String fieldName = "firstName";
+        Map<String, String> updateData = new HashMap<>();
+        updateData.put(fieldName, "M");
+        Response responseUpdateData = apiCoreRequests.makePutRequest("https://playground.learnqa.ru/api/user/" + userId,
+                header,
+                cookie,
+                updateData);
+
+        Assertions.assertResponseCodeEquals(responseUpdateData , 400);
+        Assertions.assertResponseErrorText(responseUpdateData, "Too short value for field " + fieldName);
     }
 }
