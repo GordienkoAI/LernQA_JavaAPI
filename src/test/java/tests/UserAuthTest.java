@@ -49,7 +49,6 @@ public class UserAuthTest extends BaseTestCase {
     @Description("This test successfully authorize user by email and password")
     @DisplayName("Test positive auth user")
     public void testAuthUser(){
-
         Response responseCheckAuth = apiCoreRequests
                 .makeGetRequest("https://playground.learnqa.ru/api/user/auth",this.header, this.cookie );
         Assertions.assertJsonByName(responseCheckAuth, "user_id", this.userIdOnAuth);
