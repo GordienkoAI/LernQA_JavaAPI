@@ -25,7 +25,6 @@ import org.junit.jupiter.api.DisplayName;
 @Feature("Authorization")
 public class UserAuthTest extends BaseTestCase {
 
-    private final ApiCoreRequests apiCoreRequests = new ApiCoreRequests();
     String cookie;
     String header;
     int userIdOnAuth;

@@ -78,4 +78,13 @@ public class ApiCoreRequests {
                 .put(url)
                 .andReturn();
     }
+
+    @Step("Make a PUT-request person data not authorize area")
+    public Response makePutRequestNotAuthorize(String url, Map<String, String> data)
+    {
+        return given()
+                .body(data)
+                .put(url)
+                .andReturn();
+    }
 }
